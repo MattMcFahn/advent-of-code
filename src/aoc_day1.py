@@ -36,7 +36,7 @@ def get_increase_count(input_values: List) -> int:
 
 
 if __name__ == "__main__":
-    FILEPATH = r"/resources/aoc-day1.txt"
+    FILEPATH = r"./resources/aoc-day1.txt"
     values = get_input(FILEPATH)
 
     # Part 1, increase count on values
