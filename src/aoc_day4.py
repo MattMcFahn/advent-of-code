@@ -83,6 +83,6 @@ def get_winning_board(boards, numbers):
 
 
 if __name__ == "__main__":
-    FILEPATH = r"resources/aoc-day4-TEST.txt"
+    FILEPATH = r"../resources/aoc-day4-TEST.txt"
     input_numbers, input_boards = setup_game(FILEPATH)
     final_board, final_number = get_winning_board(input_boards, input_numbers)
