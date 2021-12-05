@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "aoc"
+version = "0.1.0"
+description = "Advent of Code challenges solved in Python"
+authors = ["Matt McFahn"]
+
+[tool.poetry.dependencies]
+python = ">=3.7.1"
+pre-commit = "^2.16.0"
+pandas = "^1.3.4"
+virtualenv = "^20.10.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+exclude = '''
+/(
+  \.toml
+  |\.sh
+  |\.git
+  |\.ini
+  |Dockerfile
+  |Jenkinfile
+)/
+'''
