@@ -15,9 +15,7 @@ def make_sliding_window(input_values: List) -> List:
      where element i = sum ( elem_i, elem_(i-1), elem_(i-2) )
     """
     summed_values = [
-        input_values[i] +
-        input_values[i-1] +
-        input_values[i-2]
+        input_values[i] + input_values[i - 1] + input_values[i - 2]
         for i in range(2, len(input_values))
     ]
     return summed_values

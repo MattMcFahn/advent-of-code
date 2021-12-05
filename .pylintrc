@@ -10,6 +10,6 @@
 # Ignore directories
 
 # Disable hooks
-disable=import-error
+disable=import-error,invalid-name
 
 # TODO: Move this into pyproject.toml config
