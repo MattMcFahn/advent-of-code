@@ -138,7 +138,7 @@ def challenge_two(input_numbers: List, input_boards: Dict[int, pd.DataFrame]):
 
 
 if __name__ == "__main__":
-    FILEPATH = r"/resources/aoc-day4.txt"
+    FILEPATH = r"./resources/aoc-day4.txt"
     numbers, boards = setup_game(FILEPATH)
 
     challenge_one_result = challenge_one(numbers, boards)

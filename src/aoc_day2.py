@@ -38,7 +38,7 @@ def calculate_answer(input_values: List) -> Tuple[int, int, int]:
 
 
 if __name__ == "__main__":
-    FILEPATH = r"/resources/aoc-day2.txt"
+    FILEPATH = r"./resources/aoc-day2.txt"
     values, keys = get_input(FILEPATH)
     summed_values = {key: sum([int(x[-1]) for x in values if key in x]) for key in keys}
 

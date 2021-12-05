@@ -147,7 +147,7 @@ def challenge_two(values: List[Dict[str, tuple]], board: np.array) -> int:
 
 
 if __name__ == "__main__":
-    FILEPATH = r"/resources/aoc-day5.txt"
+    FILEPATH = r"./resources/aoc-day5.txt"
     # Setup
     input_values = setup_game(FILEPATH)
     zero_board = setup_zero_board(input_values)

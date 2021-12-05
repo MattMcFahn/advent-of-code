@@ -72,7 +72,7 @@ def calculate_oxygen_or_life(dataframe: pd.DataFrame, oxygen_or_life: bool = Tru
 
 
 if __name__ == "__main__":
-    FILEPATH = r"/resources/aoc-day3.txt"
+    FILEPATH = r"./resources/aoc-day3.txt"
 
     # Challenge one
     input_dataframe = get_input_as_dataframe(FILEPATH)
