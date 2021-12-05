@@ -1,14 +1,19 @@
 """Script for day 5 solution"""
+from typing import Dict, List, Tuple
+
 import math
 import numpy as np
 
-from typing import Dict, List, Tuple
-
-filepath = r"/Users/matt/Library/Application Support/JetBrains/PyCharmCE2021.2/scratches/resources/aoc-day5.txt"
+# pylint: disable=fixme
+# TODO: Align line length for black and pylint
 
 
 def setup_game(filepath: str) -> List[Dict[str, Tuple]]:
-    """From the input filepath, creates a list of integers to be called in order, and the three boards for the game"""
+    """
+
+    From the input filepath, creates a list of integers to be called in order,
+    and the three boards for the game
+    """
     with open(filepath) as file:
         lines = file.readlines()
     lines = [x.strip("\n") for x in lines]
@@ -24,10 +29,16 @@ def setup_game(filepath: str) -> List[Dict[str, Tuple]]:
     return values
 
 
-def setup_zero_board(input_values: List[Dict[str, Tuple]]) -> np.array:
+def setup_zero_board(value_list: List[Dict[str, Tuple]]) -> np.array:
     """Gets max x and y values, and creates an empty array of size max_x * max_y"""
-    max_x = max(list(values["x"][0] for values in input_values) + list(values["x"][1] for values in input_values))
-    max_y = max(list(values["y"][0] for values in input_values) + list(values["y"][1] for values in input_values))
+    max_x = max(
+        list(values["x"][0] for values in input_values)
+        + list(values["x"][1] for values in value_list)  # pylint: disable=line-too-long
+    )
+    max_y = max(
+        list(values["y"][0] for values in input_values)
+        + list(values["y"][1] for values in value_list)  # pylint: disable=line-too-long
+    )
     maximum = max(max_x, max_y)
     return np.zeros(shape=(maximum + 1, maximum + 1))
 
@@ -38,7 +49,11 @@ def is_horizontal_or_vertical(line: Dict[str, Tuple]) -> bool:
 
 
 def get_degrees(start_point, end_point):
-    """Helper to get degrees between two points - used to determine the orientation of a line between the points"""
+    """
+
+    Helper to get degrees between two points.
+    Used to determine the orientation of a line between the points
+    """
     return math.degrees(math.atan2(start_point[1] - end_point[1], start_point[0] - end_point[0]))
 
 
@@ -59,7 +74,7 @@ def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
 
         points = list(zip(x_values, [y_coordinate] * len(x_values)))
 
-    elif not (len(set(line["y"])) == 1) and not (len(set(line["x"])) == 1):
+    elif not len(set(line["y"])) == 1 and not len(set(line["x"])) == 1:
         start_index = 0 if line["x"][0] < line["x"][1] else 1
         end_index = int(not start_index)
         start_point = (line["x"][start_index], line["y"][start_index])
@@ -69,14 +84,16 @@ def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
             points = [
                 (coord, start_point[1] - step)
                 for coord, step in zip(
-                    range(start_point[0], end_point[0] + 1), range(0, len(range(start_point[0], end_point[0] + 1)) + 1)
+                    range(start_point[0], end_point[0] + 1),
+                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
                 )
             ]
         elif get_degrees(start_point, end_point) == -135:
             points = [
                 (coord, start_point[1] + step)
                 for coord, step in zip(
-                    range(start_point[0], end_point[0] + 1), range(0, len(range(start_point[0], end_point[0] + 1)) + 1)
+                    range(start_point[0], end_point[0] + 1),
+                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
                 )
             ]
 
@@ -91,11 +108,15 @@ def mark_board(board: np.array, points: List[Tuple]) -> np.array:
     return board
 
 
-def update_board(board: np.array, input_values: List[Dict[str, tuple]], diagonals: bool = False) -> np.array:
-    """Given the input co-ordinates and starting board, identify horizontal / vertical lines, and update the board with
-    points that have been crossed
+def update_board(
+    board: np.array, values: List[Dict[str, tuple]], diagonals: bool = False
+) -> np.array:  # pylint: disable=line-too-long
     """
-    for line in input_values:
+
+    Given the input co-ordinates and starting board, identify horizontal / vertical lines,
+    and update the board with points that have been crossed
+    """
+    for line in values:
         if is_horizontal_or_vertical(line):
             points = get_points_crossed(line)
             board = mark_board(board, points)
@@ -107,26 +128,27 @@ def update_board(board: np.array, input_values: List[Dict[str, tuple]], diagonal
     return board
 
 
-def get_number_points_greater_than_x(board: np.array, x: int) -> int:
-    """Given a numpy array and an input integer, count the number of entries > x"""
-    return (board >= x).sum()
+def get_number_points_greater_than_x(board: np.array, limit: int) -> int:
+    """Given a numpy array and an input integer, count the number of entries > limit"""
+    return (board >= limit).sum()
 
 
-def challenge_one(input_values: List[Dict[str, tuple]], board: np.array) -> int:
+def challenge_one(values: List[Dict[str, tuple]], board: np.array) -> int:
     """Wraps up steps for challenge 1"""
-    board = update_board(board, input_values, diagonals=False)
-    return get_number_points_greater_than_x(board, x=2)
+    board = update_board(board, values, diagonals=False)
+    return get_number_points_greater_than_x(board, limit=2)
 
 
-def challenge_two(input_values: List[Dict[str, tuple]], board: np.array) -> int:
+def challenge_two(values: List[Dict[str, tuple]], board: np.array) -> int:
     """Wrap up steps for challenge 2"""
-    board = update_board(board, input_values, diagonals=True)
-    return get_number_points_greater_than_x(board, x=2)
+    board = update_board(board, values, diagonals=True)
+    return get_number_points_greater_than_x(board, limit=2)
 
 
 if __name__ == "__main__":
+    FILEPATH = r"/resources/aoc-day5.txt"
     # Setup
-    input_values = setup_game(filepath)
+    input_values = setup_game(FILEPATH)
     zero_board = setup_zero_board(input_values)
 
     # Challenge one

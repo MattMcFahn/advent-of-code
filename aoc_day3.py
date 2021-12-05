@@ -1,7 +1,7 @@
 """Helper script to calculate results for AOC challenge, day 3"""
 import pandas as pd
 
-# pylint: disable=fixme
+# pylint: disable=fixme,no-else-return
 # TODO: Update with the working version
 # TODO: Update the input file
 
@@ -12,9 +12,10 @@ def get_input_as_dataframe(filepath: str) -> pd.DataFrame:
         lines = file.readlines()
         values = [line.rstrip() for line in lines]
 
-    df = pd.DataFrame({"values": values})
-    df = df["values"].str.split(pat="", expand=True).drop(columns={0, len(df.values[0][0]) + 1})
-    return df
+    dataframe = pd.DataFrame({"values": values})
+    dataframe = dataframe["values"].str.split(pat="", expand=True)
+    dataframe = dataframe.drop(columns={0, len(dataframe.values[0][0]) + 1})
+    return dataframe
 
 
 def get_opposite(val: str) -> str:
@@ -25,9 +26,9 @@ def get_opposite(val: str) -> str:
     return "1" if val == "0" else "0"
 
 
-def get_selector(df, col, oxygen):
+def get_selector(dataframe, col, oxygen):
     """Helper"""
-    mode = df[col].mode()
+    mode = dataframe[col].mode()
     if len(mode) > 1:
         if oxygen:
             return "1"
@@ -41,12 +42,12 @@ def get_selector(df, col, oxygen):
             return get_opposite(mode)
 
 
-def calculate(df: pd.DataFrame):
+def calculate(dataframe: pd.DataFrame):
     """Helper to apply logic"""
     gamma = ""
     epsilon = ""
-    for col in df.columns:
-        gamma_bit = get_selector(df, col, True)
+    for col in dataframe.columns:
+        gamma_bit = get_selector(dataframe, col, True)
         epsilon_bit = get_opposite(int(gamma_bit))
         gamma += gamma_bit
         epsilon += epsilon_bit
@@ -55,15 +56,15 @@ def calculate(df: pd.DataFrame):
     return result
 
 
-def calculate_oxygen_or_life(df: pd.DataFrame, oxygen_or_life: bool = True) -> int:
+def calculate_oxygen_or_life(dataframe: pd.DataFrame, oxygen_or_life: bool = True) -> int:
     """Calculates the score based on whether it's for oxygen or life"""
     col = 0
-    subset = df.copy()
+    subset = dataframe.copy()
 
     while len(subset) > 1:
         col += 1
-        selector = get_selector(subset, col, oxygen)
-        subset = subset.loc[df[col] == selector]
+        selector = get_selector(subset, col, oxygen_or_life)
+        subset = subset.loc[dataframe[col] == selector]
     subset = subset.reset_index(drop=True)
 
     result = "".join([str(x) for x in subset.values[0]])
@@ -71,18 +72,18 @@ def calculate_oxygen_or_life(df: pd.DataFrame, oxygen_or_life: bool = True) -> i
 
 
 if __name__ == "__main__":
-    filepath = r"/resources/aoc-day3.txt"
+    FILEPATH = r"/resources/aoc-day3.txt"
 
     # Challenge one
-    input_dataframe = get_input_as_dataframe(filepath)
+    input_dataframe = get_input_as_dataframe(FILEPATH)
     challenge_one = calculate(input_dataframe)
     print(f"Challenge one result: {challenge_one}")
 
     # Challenge two
-    oxygen = calculate_oxygen_or_life(input_dataframe)
-    life = calculate_oxygen_or_life(input_dataframe, False)
+    oxygen_result = calculate_oxygen_or_life(input_dataframe)
+    life_result = calculate_oxygen_or_life(input_dataframe, False)
 
-    print(f"Oxygen: {oxygen}")
-    print(f"Life: {life}")
+    print(f"Oxygen: {oxygen_result}")
+    print(f"Life: {life_result}")
 
-    print(f"Challenge two result: {oxygen * life}")
+    print(f"Challenge two result: {oxygen_result * life_result}")
