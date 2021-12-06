@@ -9,5 +9,5 @@ shell:
 	poetry shell || source ~/.bash_profile
 
 
-pre-commit:
+lint:
 	pre-commit run --all-files
