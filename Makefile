@@ -4,7 +4,7 @@ env:
 
 
 shell:
-	poetry shell || source ~/.bash_profile
+	poetry shell || source ~/.bash_profile || source ~/.bashrc
 
 
 lint:

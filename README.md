@@ -21,6 +21,14 @@ Set up a poetry environment with pre-commit git hooks installed:
 
 ```make env```
 
-Run pre-commit hooks manually:
+To activate your poetry shell to run the code, you can invoke a poetry shell directly
+
+```poetry shell```
+
+Or if you want your typical bash setup in this shell, you can use a `make` command:
+
+```make shell```
+
+To run pre-commit hooks manually:
 
 ```make lint```
