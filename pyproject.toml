@@ -17,7 +17,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 100
+line-length = 120
 exclude = '''
 /(
   \.toml
@@ -28,3 +28,15 @@ exclude = '''
   |Jenkinfile
 )/
 '''
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.basic]
+variable-rgx = "[a-z_][a-z0-9_]{0,30}$"
+
+[tool.pylint.global]
+# ignoring missing module and missing class docstring errors
+disable = ["import-error","invalid-name","c-extension-no-member","fixme"]
+output-format = "colorized"
+max-statements=100
