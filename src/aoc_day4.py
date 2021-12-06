@@ -1,4 +1,4 @@
-"""A python solution to Advent of Code day 4 challenges"""
+"""Solutions for day 4"""
 from typing import Tuple, Dict, List
 
 import pandas as pd

@@ -1,4 +1,4 @@
-"""Solutions to day 6 of Advent of Code 2021"""
+"""Solutions for day 6"""
 from typing import Dict
 from collections import Counter
 

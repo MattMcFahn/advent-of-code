@@ -1,4 +1,4 @@
-"""Script for day 5 solution"""
+"""Solutions for day 5"""
 from typing import Dict, List, Tuple
 
 import math

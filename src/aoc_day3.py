@@ -1,9 +1,7 @@
-"""Helper script to calculate results for AOC challenge, day 3"""
+"""Solutions for day 3"""
 import pandas as pd
 
-# pylint: disable=fixme,no-else-return
-# TODO: Update with the working version
-# TODO: Update the input file
+# pylint: disable=no-else-return
 
 
 def get_input_as_dataframe(filepath: str) -> pd.DataFrame:
@@ -30,16 +28,10 @@ def get_selector(dataframe, col, oxygen):
     """Helper"""
     mode = dataframe[col].mode()
     if len(mode) > 1:
-        if oxygen:
-            return "1"
-        else:
-            return "0"
+        return "1" if oxygen else "0"
     else:
         mode = mode[0]
-        if oxygen:
-            return mode[0]
-        else:
-            return get_opposite(mode)
+        return mode[0] if oxygen else get_opposite(mode)
 
 
 def calculate(dataframe: pd.DataFrame):

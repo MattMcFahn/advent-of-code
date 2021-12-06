@@ -1,10 +1,6 @@
-"""Script to complete day 2 challenge of Advent of Code"""
+"""Solutions for day 2"""
 
 from typing import Tuple, List, Dict
-
-# pylint: disable=fixme
-# TODO: Update with the working version
-# TODO: Update the input file
 
 
 def get_input(filepath: str) -> Tuple[List, Dict]:

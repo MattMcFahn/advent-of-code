@@ -10,7 +10,7 @@ def get_input(filepath: str) -> List[int]:
     return lines
 
 
-def make_sliding_window(input_values: List) -> List:
+def make_sliding_window(input_values: List[int]) -> List[int]:
     """Helper that takes a list of length n and returns a list of length (n-3),
      where element i = sum ( elem_i, elem_(i-1), elem_(i-2) )
     """
@@ -21,7 +21,7 @@ def make_sliding_window(input_values: List) -> List:
     return summed_values
 
 
-def get_increase_count(input_values: List) -> int:
+def get_increase_count(input_values: List[int]) -> int:
     """Counts the number of increases between corresponding entries in the list of input_values"""
     counter = 0
 

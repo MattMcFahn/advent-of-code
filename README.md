@@ -4,7 +4,9 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Pre-commmit: enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
-A place to keep my solutions to [Advent of Code 2021](https://adventofcode.com/).
+A place to keep my python solutions to [Advent of Code 2021](https://adventofcode.com/).
+Solutions are far from optimised, but a number of good practice tools have been implemented for an opportunity to show
+how these can be implemented in a repo.
 
 # Dependencies
 
@@ -21,4 +23,4 @@ Set up a poetry environment with pre-commit git hooks installed:
 
 Run pre-commit hooks manually:
 
-```make pre-commit```
+```make lint```
