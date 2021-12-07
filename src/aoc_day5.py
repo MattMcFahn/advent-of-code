@@ -82,9 +82,7 @@ def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
                 (coord, start_point[1] - step)
                 for coord, step in zip(
                     range(start_point[0], end_point[0] + 1),
-                    range(
-                        0, len(range(start_point[0], end_point[0] + 1)) + 1
-                    ),  # pylint: disable=line-too-long
+                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
                 )
             ]
         elif get_degrees(start_point, end_point) == -135:
@@ -92,9 +90,7 @@ def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
                 (coord, start_point[1] + step)
                 for coord, step in zip(
                     range(start_point[0], end_point[0] + 1),
-                    range(
-                        0, len(range(start_point[0], end_point[0] + 1)) + 1
-                    ),  # pylint: disable=line-too-long
+                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
                 )
             ]
 

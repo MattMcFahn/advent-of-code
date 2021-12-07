@@ -1,5 +1,5 @@
 """Solutions to day 7"""
-from typing import List, Tuple, Dict
+from typing import List
 
 
 def setup_game(filepath: str) -> List[int]:
@@ -13,58 +13,32 @@ def setup_game(filepath: str) -> List[int]:
     return lines
 
 
-def min_and_max(input_list: List) -> (int, int):
-    """"""
-    return min(input_list), max(input_list)
-
-
-def lengths_from_point(input_list, point):
-    """"""
+def lengths_from_point(input_list: List[int], point: int) -> List[int]:
+    """Turn a list of positions and a target point into a list of distances from given point"""
     return [abs(x - point) for x in input_list]
 
 
-def cost_from_distance(distance):
-    """"""
-    cost = sum(range(0, distance + 1))
-    return cost
+def cost_from_distance(distance: int) -> int:
+    """Sum from 1 to distance"""
+    return sum(range(0, distance + 1))
 
 
-def cost_between_points(input_list, point):
-    """"""
+def cost_between_points(input_list: List[int], point: int) -> List[int]:
+    """
+    For an input_list of positions, and a target point, return a list of arithmetic sums from each position to the point
+    """
     distances = lengths_from_point(input_list, point)
     costs = [cost_from_distance(x) for x in distances]
     return costs
 
 
-def total_cost(input_list):
-    """"""
-    return sum(input_list)
+def challenge_answers(input_list: List[int], challenge: int) -> (int, int):
+    """Wrap up steps for challenge one and two"""
+    minimum, maximum = min(input_list), max(input_list)
 
+    functions = {1: lengths_from_point, 2: cost_between_points}
 
-def challenge_one(input_list):
-    """Wrap up steps for challenge one"""
-    min, max = min_and_max(input_list)
-
-    positions_and_cost = {
-        x: total_cost(lengths_from_point(input_list, x)) for x in range(min, max + 1)
-    }
-    
-    # TODO: Why is min giving a type error?
-    cost = list((positions_and_cost.values()))
-    cost.sort()
-    cost = cost[0]
-    position = [k for k, v in positions_and_cost.items() if v == cost][0]
-    
-    return position, cost
-
-
-def challenge_two(input_list):
-    """Wrap up challenge two"""
-    min, max = min_and_max(input_list)
-
-    positions_and_cost = {
-        x: total_cost(cost_between_points(input_list, x)) for x in range(min, max + 1)
-    }
+    positions_and_cost = {x: sum(functions[challenge](input_list, x)) for x in range(minimum, maximum + 1)}
 
     # TODO: Why is min giving a type error?
     cost = list((positions_and_cost.values()))
@@ -76,14 +50,13 @@ def challenge_two(input_list):
 
 
 if __name__ == "__main__":
-    FILEPATH = r'./resources/aoc-day7.txt'
+    FILEPATH = r"./resources/aoc-day7.txt"
     input_positions = setup_game(FILEPATH)
 
     # Challenge one
-    position_one, cost_one = challenge_one(input_positions)
+    _, cost_one = challenge_answers(input_list=input_positions, challenge=1)
     print(f"Challenge one: {cost_one}")
-    
-    # Challenge two
-    position_two, cost_two = challenge_two(input_positions)
-    print(f"Challenge one: {cost_two}")
 
+    # Challenge two
+    _, cost_two = challenge_answers(input_list=input_positions, challenge=2)
+    print(f"Challenge one: {cost_two}")

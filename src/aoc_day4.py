@@ -65,9 +65,7 @@ def check_board_won(board, input_numbers):
     )
 
 
-def get_winning_board(
-    input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]
-) -> Tuple[pd.DataFrame, List]:
+def get_winning_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]) -> Tuple[pd.DataFrame, List]:
     """Returns winning board, and the numbers called up till that point"""
     i = 5
     input_length = len(input_numbers)
@@ -82,9 +80,7 @@ def get_winning_board(
     return Exception("No winning board found - check code")
 
 
-def get_losing_board(
-    input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]
-) -> Tuple[pd.DataFrame, List]:
+def get_losing_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]) -> Tuple[pd.DataFrame, List]:
     """Returns the LAST board that would win, and the numbers called up till that point"""
     i = len(input_numbers)
 
