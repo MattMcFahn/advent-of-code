@@ -5,9 +5,8 @@ import math
 import numpy as np
 
 
-def setup_game(filepath: str) -> List[Dict[str, Tuple]]:
+def setup_game(filepath: str) -> List[Dict[str, Tuple[int, int]]]:
     """
-
     From the input filepath, creates a list of integers to be called in order,
     and the three boards for the game
     """
@@ -26,35 +25,25 @@ def setup_game(filepath: str) -> List[Dict[str, Tuple]]:
     return values
 
 
-def setup_zero_board(value_list: List[Dict[str, Tuple]]) -> np.array:
+def setup_zero_board(value_list: List[Dict[str, Tuple[int, int]]]) -> np.array:
     """Gets max x and y values, and creates an empty array of size max_x * max_y"""
-    max_x = max(
-        list(values["x"][0] for values in input_values)
-        + list(values["x"][1] for values in value_list)  # pylint: disable=line-too-long
-    )
-    max_y = max(
-        list(values["y"][0] for values in input_values)
-        + list(values["y"][1] for values in value_list)  # pylint: disable=line-too-long
-    )
+    max_x = max(list(values["x"][0] for values in input_values) + list(values["x"][1] for values in value_list))
+    max_y = max(list(values["y"][0] for values in input_values) + list(values["y"][1] for values in value_list))
     maximum = max(max_x, max_y)
     return np.zeros(shape=(maximum + 1, maximum + 1))
 
 
-def is_horizontal_or_vertical(line: Dict[str, Tuple]) -> bool:
+def is_horizontal_or_vertical(line: Dict[str, Tuple[int, int]]) -> bool:
     """Is this line going horizontally or vertically"""
     return len(set(line["x"])) == 1 or len(set(line["y"])) == 1
 
 
-def get_degrees(start_point, end_point):
-    """
-
-    Helper to get degrees between two points.
-    Used to determine the orientation of a line between the points
-    """
+def get_degrees(start_point: int, end_point: int):
+    """Helper to get degrees between two points. Used to determine the orientation of a line between the points"""
     return math.degrees(math.atan2(start_point[1] - end_point[1], start_point[0] - end_point[0]))
 
 
-def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
+def get_points_crossed(line: Dict[str, Tuple[int, int]]) -> List[Tuple[int, int]]:
     """
     Identify points crossed by a line. For diagonals, verifies that the angle is 45 degrees by
     checking that the length traveled in each co-ordinate direction is equal
@@ -81,33 +70,28 @@ def get_points_crossed(line: Dict[str, Tuple]) -> List[Tuple]:
             points = [
                 (coord, start_point[1] - step)
                 for coord, step in zip(
-                    range(start_point[0], end_point[0] + 1),
-                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
+                    range(start_point[0], end_point[0] + 1), range(0, len(range(start_point[0], end_point[0] + 1)) + 1)
                 )
             ]
         elif get_degrees(start_point, end_point) == -135:
             points = [
                 (coord, start_point[1] + step)
                 for coord, step in zip(
-                    range(start_point[0], end_point[0] + 1),
-                    range(0, len(range(start_point[0], end_point[0] + 1)) + 1),  # pylint: disable=line-too-long
+                    range(start_point[0], end_point[0] + 1), range(0, len(range(start_point[0], end_point[0] + 1)) + 1)
                 )
             ]
 
     return points
 
 
-def mark_board(board: np.array, points: List[Tuple]) -> np.array:
+def mark_board(board: np.array, points: List[Tuple[int, int]]) -> np.array:
     """Add +1 to each point crossed"""
     for point in points:
-        # -1 is due to indexing at 0 for a numpy array
         board[point[1], point[0]] += 1
     return board
 
 
-def update_board(
-    board: np.array, values: List[Dict[str, tuple]], diagonals: bool = False
-) -> np.array:  # pylint: disable=line-too-long
+def update_board(board: np.array, values: List[Dict[str, Tuple[int, int]]], diagonals: bool = False) -> np.array:
     """
 
     Given the input co-ordinates and starting board, identify horizontal / vertical lines,

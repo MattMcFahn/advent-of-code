@@ -24,7 +24,7 @@ def get_opposite(val: str) -> str:
     return "1" if val == "0" else "0"
 
 
-def get_selector(dataframe, col, oxygen):
+def get_selector(dataframe: pd.DataFrame, col: str, oxygen: bool) -> str:
     """Helper"""
     mode = dataframe[col].mode()
     if len(mode) > 1:
@@ -34,7 +34,7 @@ def get_selector(dataframe, col, oxygen):
         return mode[0] if oxygen else get_opposite(mode)
 
 
-def calculate(dataframe: pd.DataFrame):
+def calculate(dataframe: pd.DataFrame) -> int:
     """Helper to apply logic"""
     gamma = ""
     epsilon = ""

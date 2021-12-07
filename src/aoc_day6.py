@@ -29,7 +29,7 @@ def get_next_days_population(population: Dict[int, int]) -> Dict[int, int]:
     }
 
 
-def challenge_one(population: Dict[int, int], target_day: int) -> int:
+def challenge_output(population: Dict[int, int], target_day: int) -> int:
     """
     Wraps up steps for chalenge one. Given starting population and times till birth, projects the
     population at day "target_day"
@@ -47,10 +47,10 @@ if __name__ == "__main__":
     input_day = 80
 
     # Challenge one
-    final_population = challenge_one(population=input_times, target_day=input_day)
+    final_population = challenge_output(population=input_times, target_day=input_day)
     print(f"Challenge one: {final_population}")
 
     # Challenge two
     second_day = 256
-    second_population = challenge_one(population=input_times, target_day=second_day)
+    second_population = challenge_output(population=input_times, target_day=second_day)
     print(f"Challenge two: {second_population}")

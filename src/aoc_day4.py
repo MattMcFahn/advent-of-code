@@ -29,7 +29,7 @@ def setup_game(filepath: str) -> Tuple[List, Dict[int, pd.DataFrame]]:
     return input_numbers, input_boards
 
 
-def check_verticals(board, input_numbers):
+def check_verticals(board: pd.DataFrame, input_numbers: List[int]) -> bool:
     """Implements the vertical checks of check_board_won"""
     for i in range(0, len(board)):  # pylint: disable=consider-using-enumerate
         values = set(board[i].values)
@@ -38,12 +38,12 @@ def check_verticals(board, input_numbers):
     return False
 
 
-def check_horizontals(board, input_numbers):
+def check_horizontals(board: pd.DataFrame, input_numbers: List[int]) -> bool:
     """Implements the horizontal checks of check_board_won"""
     return check_verticals(board.T, input_numbers)
 
 
-def check_diagonals(board, input_numbers):
+def check_diagonals(board: pd.DataFrame, input_numbers: List[int]) -> bool:
     """Implements the diagonal checks of check_board_won"""
     diag_one = set(np.diag(board))
     diag_two = set(np.diag(board))
@@ -51,7 +51,7 @@ def check_diagonals(board, input_numbers):
     return not diag_one - set(input_numbers) or not diag_two - set(input_numbers)
 
 
-def check_board_won(board, input_numbers):
+def check_board_won(board: pd.DataFrame, input_numbers: List[int]) -> bool:
     """Checks whether a selection of numbers (>5) completes a board.
     Rules that ensure a board will be complete:
         * A diagonal line
@@ -65,7 +65,9 @@ def check_board_won(board, input_numbers):
     )
 
 
-def get_winning_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]) -> Tuple[pd.DataFrame, List]:
+def get_winning_board(
+    input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]
+) -> Tuple[pd.DataFrame, List[int]]:
     """Returns winning board, and the numbers called up till that point"""
     i = 5
     input_length = len(input_numbers)
@@ -80,7 +82,7 @@ def get_winning_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List
     return Exception("No winning board found - check code")
 
 
-def get_losing_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]) -> Tuple[pd.DataFrame, List]:
+def get_losing_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[int]) -> Tuple[pd.DataFrame, List[int]]:
     """Returns the LAST board that would win, and the numbers called up till that point"""
     i = len(input_numbers)
 
@@ -94,7 +96,7 @@ def get_losing_board(input_boards: Dict[int, pd.DataFrame], input_numbers: List[
     return Exception("No losing board found - check code")
 
 
-def get_unmarked_number_total(winning_board: pd.DataFrame, input_numbers: List):
+def get_unmarked_number_total(winning_board: pd.DataFrame, input_numbers: List[int]) -> int:
     """Returns the sum of all numbers on winning_board that aren't in numbers"""
     values = []
     for x in winning_board.columns:
@@ -105,7 +107,7 @@ def get_unmarked_number_total(winning_board: pd.DataFrame, input_numbers: List):
     return sum(non_marked_numbers)
 
 
-def challenge_one(input_numbers: List, input_boards: Dict[int, pd.DataFrame]):
+def challenge_one(input_numbers: List[int], input_boards: Dict[int, pd.DataFrame]) -> int:
     """Chain steps for challenge 1:
         * Get the winning board
         * Get sum of unmarked numbers
@@ -119,7 +121,7 @@ def challenge_one(input_numbers: List, input_boards: Dict[int, pd.DataFrame]):
     return result
 
 
-def challenge_two(input_numbers: List, input_boards: Dict[int, pd.DataFrame]):
+def challenge_two(input_numbers: List[int], input_boards: Dict[int, pd.DataFrame]) -> int:
     """Chain steps for challenge 2:
         * Get the LAST board to win
         * Get sum unmarked numbers
