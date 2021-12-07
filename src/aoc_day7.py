@@ -41,9 +41,7 @@ def challenge_answers(input_list: List[int], challenge: int) -> (int, int):
     positions_and_cost = {x: sum(functions[challenge](input_list, x)) for x in range(minimum, maximum + 1)}
 
     # TODO: Why is min giving a type error?
-    cost = list((positions_and_cost.values()))
-    cost.sort()
-    cost = cost[0]
+    cost = min((positions_and_cost.values()))
     position = [k for k, v in positions_and_cost.items() if v == cost][0]
 
     return position, cost
