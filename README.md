@@ -5,8 +5,8 @@
 [![Pre-commmit: enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
 A place to keep my python solutions to [Advent of Code 2021](https://adventofcode.com/).
-Solutions are far from optimised, but a number of good practice tools have been implemented for an opportunity to show
-how these can be implemented in a repo.
+
+Solutions are by no means optimal, but a number of tools have been used to help with clean code and easy use.
 
 # Dependencies
 
@@ -15,6 +15,7 @@ how these can be implemented in a repo.
 * [Pre-commit](https://pre-commit.com/) to enforce consistency
 * [Make](https://www.gnu.org/software/make/) for ease of command line tools
 
+If you want to try out the code but don't want to bother with the above - all you really need is `numpy` and `pandas`!
 # Setup (first use)
 
 Set up a poetry environment with pre-commit git hooks installed:
