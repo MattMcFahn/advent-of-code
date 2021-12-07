@@ -3,6 +3,7 @@
 [![Linter: pylint](https://img.shields.io/badge/%20linter-pylint-%231674b1?style=flat)](https://github.com/PyCQA/pylint)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Pre-commmit: enabled](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
+[![Conventional commits: 1.0.0](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org/en/v1.0.0/)
 
 A place to keep my python solutions to [Advent of Code 2021](https://adventofcode.com/).
 
