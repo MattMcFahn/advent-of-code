@@ -1,16 +1,15 @@
-"""Solutions to day 8"""
+"""Solutions to day 9"""
 from math import prod
 from typing import List, Tuple
 
 
-def setup_game(filepath: str) -> List[str]:
+def setup_game(filepath: str) -> List[List[str]]:
     """
-    From the input filepath, read and sort the input strings
+    From the input filepath, read the input strings into a list of lists
     """
     with open(filepath) as file:
         lines = file.readlines()
     lines = [list(x.strip("\n")) for x in lines]
-    # frame = pd.DataFrame(lines)
 
     return lines
 
