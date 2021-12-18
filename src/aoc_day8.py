@@ -67,40 +67,9 @@ def setup_constraints(
     expected_patterns = {x: y for x, y in expected_mappings.items() if x in [1, 7, 4, 8]}
 
     constraints = {
-        "a": (set(patterns[7]) - set(patterns[1])).pop(),
         (expected_patterns[1][0], expected_patterns[1][1]): (patterns[1][0], patterns[1][1]),
         tuple(set(expected_patterns[4]) - set(expected_patterns[1])): tuple(set(patterns[4]) - set(patterns[1])),
-        tuple(set(expected_patterns[8]) - (set(expected_patterns[4]) | {"a"})): tuple(
-            set(patterns[8]) - (set(patterns[4]) | (set(patterns[7]) - set(patterns[1])))
-        ),
     }
-
-    # From five letter maps
-    five_letter = list({x for x in entries if len(x) == 5})
-    five_letter_observed = [list(set("abcdefg") - set(x)) for x in five_letter]
-    five_letter_expected = [
-        list(set("abcdefg") - set(expected_mappings[2])),
-        list(set("abcdefg") - set(expected_mappings[3])),
-        list(set("abcdefg") - set(expected_mappings[5])),
-    ]
-    # Double appearing - must match, single appearing must match but is redundant
-    five_letter_observed = [x for x in [item for sublist in five_letter_observed for item in sublist]]
-    five_letter_expected = [x for x in [item for sublist in five_letter_expected for item in sublist]]
-
-    constraints[tuple(set(x for x in five_letter_expected if five_letter_expected.count(x) == 2))] = tuple(
-        set(x for x in five_letter_observed if five_letter_observed.count(x) == 2)
-    )
-
-    # Constraints from 0, 6, 9 - one element missing from each
-    six_letter = list({x for x in entries if len(x) == 6})
-    six_letter_observed = tuple((set("abcdefg") - set(x)).pop() for x in six_letter)
-    six_letter_expected = (
-        (set("abcdefg") - set(expected_mappings[0])).pop(),
-        (set("abcdefg") - set(expected_mappings[6])).pop(),
-        (set("abcdefg") - set(expected_mappings[9])).pop(),
-    )
-
-    constraints[six_letter_expected] = six_letter_observed
 
     # HACK: Ordering of ('b', 'd'), ('c', 'f')
     if ("b", "d") in constraints.keys():
