@@ -80,44 +80,34 @@ def setup_constraints(
     return constraints
 
 
+def get_result_single_constraint(number: int, full_length: int, match_length: int, constraint: set, entries) -> str:
+    """Helper that identifies which string must correspond to the given `number`,
+    based on the constraint and match_length identified
+    """
+    result = {x for x in entries if len(x) == full_length and len(set(x) & constraint) == match_length}
+    if len(result) != 1:
+        raise Exception(f"Issue identifying pattern for number: {number}")
+
+    result = result.pop()
+    result = list(result)
+    return result
+
+
 def identify_six_entry_numbers(constraints, entries, patterns):
     """9, 0, 6"""
     # 9 is the only one with "expected" ('b', 'd'), ('c','f') in it
     constraint = set("".join(constraints[("d", "b")]).join(constraints[("c", "f")]))
-    result = {x for x in entries if len(x) == 6 and len(set(x) & constraint) == 4}
-    if len(result) > 1:
-        raise Exception("Issue identifying pattern for number: 9")
-    if len(result) == 0:
-        print("No patterns observed for 9")
-    else:
-        result = result.pop()
-        result = list(result)
-        patterns[9] = result
+    result = get_result_single_constraint(9, 6, 4, constraint, entries)
+    patterns[9] = result
 
     # 0 has only one of "expected" ('b', 'd')
     constraint = set("".join(constraints[("d", "b")]))
-    result = {x for x in entries if len(x) == 6 and len(set(x) & constraint) == 1}
-    if len(result) > 1:
-        raise Exception("Issue identifying pattern for number: 0")
-    if len(result) == 0:
-        print("No patterns observed for 0")
-        result = []
-    else:
-        result = result.pop()
-        result = list(result)
+    result = get_result_single_constraint(0, 6, 1, constraint, entries)
     patterns[0] = result
 
     # 6 has only one of "expected" ('c', 'f')
     constraint = set("".join(constraints[("c", "f")]))
-    result = {x for x in entries if len(x) == 6 and len(set(x) & constraint) == 1}
-    if len(result) > 1:
-        raise Exception("Issue identifying pattern for number: 6")
-    if len(result) == 0:
-        print("No patterns observed for 6")
-        result = []
-    else:
-        result = result.pop()
-        result = list(result)
+    result = get_result_single_constraint(6, 6, 1, constraint, entries)
     patterns[6] = result
     return patterns
 
@@ -130,39 +120,20 @@ def identify_five_entry_numbers(constraints, entries, patterns):
     result = {
         x for x in entries if len(x) == 5 and len(set(x) & constraint_one) == 1 and len(set(x) & constraint_two) == 1
     }
-    if len(result) > 1:
+    if len(result) != 1:
         raise Exception("Issue identifying pattern for number: 2")
-    if len(result) == 0:
-        print("No patterns observed for 2")
-    else:
-        result = result.pop()
-        result = list(result)
-        patterns[2] = result
+    result = result.pop()
+    result = list(result)
+    patterns[2] = result
 
     # 3 must have "expected" ('c', 'f')
     constraint = set("".join(constraints[("c", "f")]))
-    result = {x for x in entries if len(x) == 5 and len(set(x) & constraint) == 2}
-    if len(result) > 1:
-        raise Exception("Issue identifying pattern for number: 3")
-    if len(result) == 0:
-        print("No patterns observed for 3")
-        result = []
-    else:
-        result = result.pop()
-        result = list(result)
+    result = get_result_single_constraint(3, 5, 2, constraint, entries)
     patterns[3] = result
 
     # 5 has only one of "expected" ('b', 'd')
     constraint = set("".join(constraints[("d", "b")]))
-    result = {x for x in entries if len(x) == 5 and len(set(x) & constraint) == 2}
-    if len(result) > 1:
-        raise Exception("Issue identifying pattern for number: 5")
-    if len(result) == 0:
-        print("No patterns observed for 5")
-        result = []
-    else:
-        result = result.pop()
-        result = list(result)
+    result = get_result_single_constraint(5, 5, 2, constraint, entries)
     patterns[5] = result
     return patterns
 
