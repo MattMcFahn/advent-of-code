@@ -1,9 +1,8 @@
 """Solutions to day 8"""
 from typing import List, Dict, Union, Tuple
-from itertools import groupby
 
 
-def expected_mappings() -> Dict[int, List[str]]:
+def get_expected_mappings() -> Dict[int, List[str]]:
     """Fixture to set up the expected mappings of integers to lists of strings"""
     return {
         0: ["a", "b", "c", "e", "f", "g"],
@@ -21,7 +20,7 @@ def expected_mappings() -> Dict[int, List[str]]:
 
 def setup_game(filepath: str) -> List[str]:
     """
-    From the input filepath, reads the list of edges in the game, and single visit nodes
+    From the input filepath, read and sort the input strings
     """
     with open(filepath) as file:
         lines = file.readlines()
@@ -29,7 +28,7 @@ def setup_game(filepath: str) -> List[str]:
 
     # Sort strings
     lines = [x.split(" ") for x in lines]
-    for index in range(0, len(lines)):
+    for index, line in enumerate(lines):
         line = lines[index]
         line = ["".join(sorted(x)) for x in line]
         line = " ".join(line)
@@ -61,9 +60,9 @@ def get_easy_patterns(entries) -> Dict[int, List[str]]:
 
 
 def setup_constraints(
-    expected_mappings: Dict[int, List[str]], patterns: Dict[int, List[str]], entries: List[str]
+    expected_mappings: Dict[int, List[str]], patterns: Dict[int, List[str]]
 ) -> Dict[Union[Tuple, str], Union[Tuple, str]]:
-    """"""
+    """Identify two constraints that we'll use to identify which numbers are which patterns"""
     expected_patterns = {x: y for x, y in expected_mappings.items() if x in [1, 7, 4, 8]}
 
     constraints = {
@@ -72,6 +71,7 @@ def setup_constraints(
     }
 
     # HACK: Ordering of ('b', 'd'), ('c', 'f')
+    # TODO: Clean
     if ("b", "d") in constraints.keys():
         constraints[("d", "b")] = constraints[("b", "d")]
     if ("f", "c") in constraints.keys():
@@ -81,7 +81,7 @@ def setup_constraints(
 
 
 def identify_six_entry_numbers(constraints, entries, patterns):
-    """"""
+    """9, 0, 6"""
     # 9 is the only one with "expected" ('b', 'd'), ('c','f') in it
     constraint = set("".join(constraints[("d", "b")]).join(constraints[("c", "f")]))
     result = {x for x in entries if len(x) == 6 and len(set(x) & constraint) == 4}
@@ -168,9 +168,12 @@ def identify_five_entry_numbers(constraints, entries, patterns):
 
 
 def get_hard_patterns(expected_mappings: Dict[int, List[str]], patterns: Dict[int, List[str]], entries: List[str]):
-    """Get map of observed to actual letters"""
+    """Identify those patterns that aren't immediately obvious:
+        * Input sequences with 6 letters/entries
+        * Input sequences with 5 letters/entries
+    """
     # Other constraints identifiable from the 4 determinable - build a system of sim eqs
-    constraints = setup_constraints(expected_mappings, patterns, entries)
+    constraints = setup_constraints(expected_mappings=expected_mappings, patterns=patterns)
 
     patterns = identify_six_entry_numbers(constraints=constraints, entries=entries, patterns=patterns)
     patterns = identify_five_entry_numbers(constraints=constraints, entries=entries, patterns=patterns)
@@ -179,19 +182,26 @@ def get_hard_patterns(expected_mappings: Dict[int, List[str]], patterns: Dict[in
 
 
 def identify_patterns(line: str, expected_mappings: Dict[int, List[str]]) -> Dict[str, int]:
-    """From an input list, identify which strings correspond to which integers"""
+    """From an input list, identify which string sequences correspond to which integers"""
     entries = line.split(" ")
     entries.remove("|")
     entries = ["".join(sorted(x)) for x in entries]
+
     patterns = get_easy_patterns(entries=entries)
     patterns = get_hard_patterns(expected_mappings=expected_mappings, patterns=patterns, entries=entries)
     patterns = {"".join(y): x for x, y in patterns.items()}
+
     return patterns
 
 
 def challenge_two(lines: List[str]) -> int:
-    """Wrap up challenge two"""
-    mappings = expected_mappings()
+    """Wrap up steps for challenge two. For each entry in our list:
+        * Do analysis `identify_patterns` to map the input to corresponding numbers
+        * Turn the last 4 output strings into the digits identified
+
+    Then sum over all outputs
+    """
+    mappings = get_expected_mappings()
     results = []
 
     for line in lines:
