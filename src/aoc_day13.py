@@ -1,7 +1,9 @@
 """Solutions to day 12"""
-from typing import List, Dict
+from typing import List
 import numpy as np
 import pandas as pd
+
+# pylint: disable=unnecessary-comprehension
 
 
 def setup_game(filepath: str) -> (pd.DataFrame, List[str]):
@@ -61,6 +63,15 @@ def challenge_one(input_frame: pd.DataFrame, fold_instructions: List[str]) -> in
     return new_frame.sum().sum()
 
 
+def challenge_two(input_frame: pd.DataFrame, fold_instructions: List[str]):
+    """Completes challenge two"""
+    final_frame = input_frame.copy()
+    fold_functions = {"y": horizontal_fold, "x": vertical_fold}
+    for fold in fold_instructions:
+        final_frame = fold_functions[fold[0]](dataframe=final_frame, position=int(fold[fold.find("=") + 1 :]))
+    return final_frame
+
+
 if __name__ == "__main__":
     FILEPATH = r"./resources/aoc-day13.txt"
     frame, folds = setup_game(filepath=FILEPATH)
@@ -70,5 +81,5 @@ if __name__ == "__main__":
     print(f"Challenge one: {challenge_one}")
 
     # # Challenge two
-    # challenge_two = challenge_two(input_edges=edges)
+    challenge_two = challenge_two(input_frame=frame, fold_instructions=folds)
     # print(f"Challenge two: {challenge_two}")
