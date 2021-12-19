@@ -59,14 +59,32 @@ def simulate_step(frame: pd.DataFrame, counter: int) -> (pd.DataFrame, int):
     return frame, counter
 
 
+def simulate_to_given_step(frame: pd.DataFrame, counter: int, target_steps: int) -> (pd.DataFrame, int):
+    """Simulate a dataframe and counter up until a given step"""
+    for step in range(0, target_steps):
+        print(f"Step: {step + 1}")
+        frame, counter = simulate_step(frame, counter)
+    return frame, counter
+
+
 def challenge_one(frame: pd.DataFrame) -> int:
     """Wraps steps for challenge one"""
     target_steps = 100
     counter = 0
-    for step in range(0, target_steps):
-        print(f"Step: {step + 1}")
-        frame, counter = simulate_step(frame, counter)
+    frame, counter = simulate_to_given_step(frame, counter, target_steps)
+
     return counter
+
+
+def challenge_two(frame: pd.DataFrame) -> int:
+    """Steps for challenge two: walk through steps until max everywhere is 0"""
+    step = 0
+    counter = 0
+    while max(frame.max()) > 0:
+        step += 1
+        print(f"Step: {step}")
+        frame, counter = simulate_step(frame, counter)
+    return step
 
 
 if __name__ == "__main__":
@@ -79,5 +97,6 @@ if __name__ == "__main__":
     print(f"Challenge one: {challenge_one}")
 
     # Challenge two
-    # challenge_two = challenge_two(input_lines)
-    # print(f"Challenge two: {challenge_two}")
+    challenge_two_frame = input_frame.copy()
+    challenge_two = challenge_two(frame=challenge_two_frame)
+    print(f"Challenge two: {challenge_two}")
