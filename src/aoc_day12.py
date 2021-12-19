@@ -1,5 +1,6 @@
-"""Solutions to day 7"""
+"""Solutions to day 12"""
 from typing import List, Dict
+from collections import Counter
 
 
 def setup_game(filepath: str) -> Dict[str, str]:
@@ -14,18 +15,25 @@ def setup_game(filepath: str) -> Dict[str, str]:
     input_nodes = set(y[0] for y in input_edges) | set(y[1] for y in input_edges)
 
     input_edges = {
-        x: [y[1] for y in input_edges if y[0] == x] + [y[0] for y in input_edges if y[1] == x and y[0] != "start"]
+        x: [y[1] for y in input_edges if y[0] == x and y[1] != "start"]
+        + [y[0] for y in input_edges if y[1] == x and y[0] != "start"]
         for x in input_nodes
     }
 
     return input_edges
 
 
-def find_paths(input_edges: Dict[str, str]) -> List[List[str]]:
+def path_visited_lower_twice(path: List[str]) -> bool:
+    """Test if a path visits a lower case node twice"""
+    counts = {x: y for x, y in Counter(path).items() if x.islower() and x != "start"}
+    return max(counts.values()) > 1
+
+
+def find_paths(input_edges: Dict[str, str], visit_lower: bool = False) -> List[List[str]]:
     """
     Performs a recursive walk from the 'start' node to explore all possible branching steps that reach the 'end' node.
 
-    Lower case nodes can be visited only once.
+    If 'visit_single' then ONE lower case node can be visited twice.
 
     Records a list of paths from start -> end.
     """
@@ -40,16 +48,21 @@ def find_paths(input_edges: Dict[str, str]) -> List[List[str]]:
                 valid_paths.append(path + [next_node])
             elif next_node[0].isupper() or next_node not in path:
                 incomplete_paths.append(path + [next_node])
-            elif next_node != "start" and path[0] is None:
-                new_path = path + [next_node]
-                new_path[0] = next_node
-                incomplete_paths.append(new_path)
+            elif next_node[0].islower() and visit_lower and not path_visited_lower_twice(path):
+                incomplete_paths.append(path + [next_node])
+
     return valid_paths
 
 
 def challenge_one(input_edges: Dict[str, str]) -> int:
     """Solves challenge one"""
     paths = find_paths(input_edges)
+    return len(paths)
+
+
+def challenge_two(input_edges: Dict[str, str]) -> int:
+    """Solves challenge two"""
+    paths = find_paths(input_edges, True)
     return len(paths)
 
 
@@ -60,3 +73,7 @@ if __name__ == "__main__":
     # Challenge one
     challenge_one = challenge_one(input_edges=edges)
     print(f"Challenge one: {challenge_one}")
+
+    # Challenge two
+    challenge_two = challenge_two(input_edges=edges)
+    print(f"Challenge two: {challenge_two}")
