@@ -27,15 +27,27 @@ def perform_step(sequence: str, rules: Dict[str, str]) -> str:
     return new_sequence
 
 
-def challenge_one(start_sequence: str, rules: Dict[str, str]) -> int:
-    """Completes challenge one"""
-    steps = 10
+def sequence_to_step(start_sequence: str, rules: Dict[str, str], target_step: int) -> int:
+    """Modifies the sequence until the target step, and gets the diff of max and min frequencies"""
     sequence = start_sequence
-    for step in range(0, steps):
+    for step in range(0, target_step):
         print(f"Step: {step + 1}")
         sequence = perform_step(sequence=sequence, rules=rules)
 
-    counts = Counter(sequence)
+    return sequence
+
+
+def challenge_one(start_sequence: str, rules: Dict[str, str]) -> int:
+    """Completes challenge one"""
+    new_sequence = sequence_to_step(start_sequence, rules, target_step=10)
+    counts = Counter(new_sequence)
+    return max(counts.values()) - min(counts.values())
+
+
+def challenge_two(start_sequence: str, rules: Dict[str, str]) -> int:
+    """Completes challenge two"""
+    new_sequence = sequence_to_step(start_sequence, rules, target_step=20)
+    counts = Counter(new_sequence)
     return max(counts.values()) - min(counts.values())
 
 
@@ -48,5 +60,5 @@ if __name__ == "__main__":
     print(f"Challenge one: {challenge_one}")
 
     # Challenge two
-    # challenge_two = challenge_two(input_frame=frame, fold_instructions=folds)
-    # print(f"Challenge two: {challenge_two}")
+    challenge_two = challenge_two(start_sequence=input_sequence, rules=input_rules)
+    print(f"Challenge one: {challenge_two}")
