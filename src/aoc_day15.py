@@ -17,7 +17,7 @@ class Graph:
         self.vertices = [x for x in product(range(0, weights.shape[0]), range(0, weights.shape[1]))]
         self.edges = {x: {} for x in self.vertices}
         self.setup_edges(weights)
-        self.visited = []
+        self.visited = set()
 
     def add_edge(self, u, v, weight):
         """Helper to add a single edge to this Graph structure.
@@ -116,7 +116,7 @@ def create_costs(graph: Graph, start_vertex: tuple) -> Dict[tuple, int]:
         if number_visited % 20000 == 0:
             print(f"{datetime.now()} Number visited: {len(graph.visited)}")
         current_cost, vertex = queue.get()
-        graph.visited.append(vertex)
+        graph.visited.add(vertex)
 
         for next_vertex, cost in graph.edges[vertex].items():
             if next_vertex not in graph.visited:
