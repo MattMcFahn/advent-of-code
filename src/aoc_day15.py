@@ -136,7 +136,7 @@ def calculate(graph: Graph) -> int:
 
 
 if __name__ == "__main__":
-    FILEPATH = r"./resources/aoc-day15.txt"
+    FILEPATH = r"./resources/aoc-day15-TEST-extra.txt"
     print("Setting up graph for challenge one... ")
     challenge_one_graph = setup_game(filepath=FILEPATH)
     print("Setting up graph for challenge one... DONE")
