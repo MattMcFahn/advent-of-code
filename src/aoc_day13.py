@@ -1,4 +1,4 @@
-"""Solutions to day 12"""
+"""Solutions to day 13"""
 from typing import List
 import numpy as np
 import pandas as pd
@@ -63,8 +63,8 @@ def challenge_one(input_frame: pd.DataFrame, fold_instructions: List[str]) -> in
     return new_frame.sum().sum()
 
 
-def challenge_two(input_frame: pd.DataFrame, fold_instructions: List[str]):
-    """Completes challenge two"""
+def challenge_two(input_frame: pd.DataFrame, fold_instructions: List[str]) -> pd.DataFrame:
+    """Completes challenge two - reading the letters is manual :("""
     final_frame = input_frame.copy()
     fold_functions = {"y": horizontal_fold, "x": vertical_fold}
     for fold in fold_instructions:
