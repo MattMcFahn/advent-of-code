@@ -1,13 +1,18 @@
 """
  Solutions to day 16 - hexidecimal/binary fun.
  Way too much reading for this problem...
+
 """
-from typing import Dict, List
+from typing import List
+from collections import namedtuple
+from math import prod
+
+Packet = namedtuple("Packet", ("packet_version", "packet_type_id", "value", "sub_packets"))
 
 
 def setup_game(filepath: str) -> str:
     """
-    From the input filepath, reads the input hexidecimal sequence, and parses into sections
+    From the input filepath, reads the input hexadecimal sequence, and parses into sections
     """
     with open(filepath) as file:
         lines = file.readlines()
@@ -16,98 +21,118 @@ def setup_game(filepath: str) -> str:
     return lines[0]
 
 
-def hex_to_decimal(char: str) -> str:
-    """Helper to convert to decimal"""
-    return {
-        "0": "0000",
-        "1": "0001",
-        "2": "0010",
-        "3": "0011",
-        "4": "0100",
-        "5": "0101",
-        "6": "0110",
-        "7": "0111",
-        "8": "1000",
-        "9": "1001",
-        "A": "1010",
-        "B": "1011",
-        "C": "1100",
-        "D": "1101",
-        "E": "1110",
-        "F": "1111",
-    }[char]
+def sum_packet_versions(packet: Packet) -> int:
+    """Helper for a completed packet: get sum of packet_versions for all sub packets"""
+    total = packet.packet_version
+    for sub_packet in packet.sub_packets:
+        total += sum_packet_versions(sub_packet)
+    return total
 
 
-def get_binary_string(hex_string: str) -> str:
-    """Helper that turns the hex string into a list of binary chars"""
-    return "".join([hex_to_decimal(char) for char in hex_string])
-
-
-def get_chunk_length_or_number_of_packets(binary_string: str, length_type_id: str) -> int:
-    """Helper to find out the length of chunks, or number of packets"""
-    length_chunk = binary_string[7:22] if length_type_id == "0" else binary_string[7:18]
-    return int(length_chunk, 2)
-
-
-def handle_literal(binary_string: str) -> (str, int):
-    """Logic to handle a literal in chunks of 5"""
-    version = binary_string[:3]
-    type_id = binary_string[3:6]
-    length_type_id = binary_string[6]
-
-    for number in range(7, len(binary_string), 5):
-        chunk = binary_string[number - 1 : number - 1 + 4]
-        if chunk[0] == "0":
-            binary_string = binary_string[number:]
-    return int(version, 2), binary_string
-
-
-def collect_packet_versions(binary_string: str) -> List[int]:
+def get_literal_value(binary_string: str, index: int) -> (int, int):
     """"""
-    packet_versions = []
-
-    while binary_string != "" and not set(binary_string) == {"0"}:
-        packet_version = binary_string[:3]
-        packet_versions.append(int(packet_version, 2))
-
-        packet_type_id = binary_string[3:6]
-        length_type_id = binary_string[6]
-        # if length_type_id =
-        # chunk_length = get_chunk_length_or_number_of_packets(binary_string=binary_string, length_type_id=length_type_id)
-
-        # If packet type id is 4, it's a literal so we need different logic
-        if packet_type_id == "4":
-            print("Literal packet being handled")
-            binary_string, literal_version = handle_literal(binary_string)
-            print(f"Literal version: {literal_version}")
-            packet_versions.append(literal_version)
-
-        else:
-            binary_string = binary_string[22:] if length_type_id == "0" else binary_string[18:]
-    return packet_versions
+    value = ""
+    while True:
+        last_group = binary_string[index] == "0"
+        value += binary_string[(index + 1) : (index + 5)]
+        index += 5
+        if last_group:
+            break
+    return int(value, 2), index
 
 
-def challenge_one(hex_string: str) -> int:
+def get_sub_packets_by_length(binary_string: str, index: int) -> (List[Packet], int):
+    """"""
+    sub_packets = []
+    length_of_sub_packets = int(binary_string[index : index + 15], 2)
+    index += 15
+    length_used = 0
+    while length_used < length_of_sub_packets:
+        # Pass back to main handling, as may have literals or operators
+        sub_packet, new_index = handle_string(binary_string, index)
+        sub_packets.append(sub_packet)
+        length_used += new_index - index
+        index = new_index
+    return sub_packets, index
+
+
+def get_sub_packets_by_number(binary_string: str, index: int) -> (List[Packet], int):
+    """"""
+    sub_packets = []
+    number_of_sub_packets = int(binary_string[index : index + 11], 2)
+    index += 11
+    for _ in range(number_of_sub_packets):
+        # Pass back to main handling, as may have literals or operators
+        sub_packet, index = handle_string(binary_string, index)
+        sub_packets.append(sub_packet)
+    return sub_packets, index
+
+
+def handle_string(binary_string: str, index: int) -> (Packet, int):
+    """Main entry point of recursion on any binary string:
+        * Get packet packet_version
+        * Get packet type id
+        * If literal (type id = 4), handle literal, else
+        * Get length_packet_type_id
+        * Iteratively get sub packets by length (type id = "0") or number (type id = "1")
+        * Get operator value
+    """
+    packet_version = int(binary_string[index : (index + 3)], 2)
+    packet_type_id = int(binary_string[(index + 3) : (index + 6)], 2)
+    index += 6
+    if packet_type_id == 4:
+        value, index = get_literal_value(binary_string, index)
+        return Packet(packet_version, packet_type_id, value, []), index
+    length_packet_type_id = binary_string[index]
+    index += 1
+    if length_packet_type_id == "0":
+        sub_packets, index = get_sub_packets_by_length(binary_string, index)
+    else:
+        sub_packets, index = get_sub_packets_by_number(binary_string, index)
+    value = calculate_value(packet_type_id, sub_packets)
+    return Packet(packet_version, packet_type_id, value, sub_packets), index
+
+
+def calculate_value(packet_type_id: int, sub_packets: List[Packet]) -> int:
+    """"""
+    value = 0
+    function_map = {0: sum, 1: prod, 2: min, 3: max}
+    if packet_type_id <= 3:
+        values = (sub_packet.value for sub_packet in sub_packets)
+        value = function_map[packet_type_id](values)
+    else:
+        sub_a, sub_b = sub_packets
+        if packet_type_id == 5:
+            value = sub_a.value > sub_b.value
+        elif packet_type_id == 6:
+            value = sub_a.value < sub_b.value
+        elif packet_type_id == 7:
+            value = sub_a.value == sub_b.value
+        value = int(value)
+    return value
+
+
+def challenge_one(packet_object: Packet) -> int:
     """Completes challenge one"""
-    binary_string = get_binary_string(hex_string=hex_string)
-
-    packet_versions = collect_packet_versions(binary_string=binary_string)
-    return sum(packet_versions)
+    return sum_packet_versions(packet_object)
 
 
-def challenge_two():
+def challenge_two(packet_object: Packet) -> int:
     """Completes challenge two"""
-    return
+    return packet_object.value
 
 
 if __name__ == "__main__":
-    FILEPATH = r"./resources/aoc-day16-TEST.txt"
+    FILEPATH = r"./resources/aoc-day16.txt"
     input_string = setup_game(filepath=FILEPATH)
 
+    # Main logic, calculate Packet
+    packet = handle_string(binary_string=bin(int(input_string, 16))[2:], index=0)[0]
+
     # Challenge one
-    challenge_one = challenge_one(hex_string=input_string)
+    challenge_one = challenge_one(packet_object=packet)
     print(f"Challenge one: {challenge_one}")
 
-    # # Challenge two
-    # challenge_two = challenge_two(start_sequence=input_sequence, rules=input_rules)
-    # print(f"Challenge two: {challenge_two}")
+    # Challenge two
+    challenge_two = challenge_two(packet_object=packet)
+    print(f"Challenge one: {challenge_two}")
