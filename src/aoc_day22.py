@@ -3,7 +3,7 @@ from typing import Tuple, Dict, List
 from itertools import product
 
 
-def instruction_is_valid(instruction: Dict[str, int]) -> bool:
+def instruction_is_in_bootup(instruction: Dict[str, int]) -> bool:
     """Tests whether the instruction intersects with cube (-50, -50, -50) to (50, 50, 50)"""
     miss = (
         (instruction["x"][0] > 50 or instruction["x"][1] < -50)
@@ -33,8 +33,13 @@ def setup_game(filepath: str) -> (Dict[Tuple[int, int, int], int], List[Dict[str
                 "z": (min([int(num) for num in z_line.split("..")]), max([int(num) for num in z_line.split("..")])),
             }
 
-            if instruction_is_valid(instruction):
-                start_instructions.append(instruction)
+            instruction["range"] = product(
+                range(instruction["x"][0], instruction["x"][1] + 1),
+                range(instruction["y"][0], instruction["y"][1] + 1),
+                range(instruction["z"][0], instruction["z"][1] + 1),
+            )
+
+            start_instructions.append(instruction)
 
     cube_range = range(-50, 51)
     start_cube = {(x, y, z): 0 for (x, y, z) in product(cube_range, cube_range, cube_range)}
@@ -63,21 +68,25 @@ def change_points(cube, target_points, instruction_type: str):
 def challenge_one(cube: Dict[Tuple[int, int, int], int], instructions: List[Dict[str, int]]) -> int:
     """Completes challenge one"""
     for instruction in instructions:
-        target_points = get_target_points(instruction)
-        cube = change_points(cube, target_points, instruction["instruction"])
+        if instruction_is_in_bootup(instruction):
+            target_points = get_target_points(instruction)
+            cube = change_points(cube, target_points, instruction["instruction"])
 
     return sum(cube.values())
 
 
 if __name__ == "__main__":
     FILEPATH = r"./resources/aoc-day22.txt"
+    print("Setup game... ")
     activity_cube, input_instructions = setup_game(filepath=FILEPATH)
+    print("Setup game... DONE")
 
     # Challenge one
+    print("Running challenge one...")
     challenge_one = challenge_one(cube=activity_cube, instructions=input_instructions)
     print(f"Challenge one: {challenge_one}")
 
     # # Challenge two
-    # challenge_two = challenge_two(packet_object=packet)
+    # TODO: Work with intersections of ranges
+    # challenge_two = challenge_two(instructions=input_instructions)
     # print(f"Challenge one: {challenge_two}")
-    #
