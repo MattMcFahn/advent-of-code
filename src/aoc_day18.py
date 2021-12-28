@@ -1,13 +1,17 @@
 """Solutions to day 18"""
-from typing import Dict, List, Union
-from itertools import product
+from typing import List
 from math import ceil, floor
 from ast import literal_eval
 
 import re
 
+# pylint: disable=too-many-instance-attributes, no-else-return
+
 
 class Pair:
+    """Custom class for a pair element, which has a left and right attribute, each of which is either an int or a Pair
+    itself"""
+
     def __init__(self, string: str, parent, depth: int = 0):
         self.string = string
         self.list = literal_eval(string)
@@ -18,11 +22,11 @@ class Pair:
         left = self.list[0]
         right = self.list[1]
 
-        if type(left) == int:
+        if isinstance(left, int):
             self.left = left
         else:
             self.left = Pair(string=str(left), parent=self, depth=depth + 1)
-        if type(right) == int:
+        if isinstance(right, int):
             self.right = right
         else:
             self.right = Pair(string=str(right), parent=self, depth=depth + 1)
@@ -30,16 +34,18 @@ class Pair:
         self.set_max_depth()
 
     def get_max_depth(self):
-        if type(self.left) == int and type(self.right) == int:
+        """Helper to get a max node depth for a pair"""
+        if isinstance(self.left, int) and isinstance(self.right, int):
             return self.depth + 1
-        if type(self.left) == int:
+        if isinstance(self.left, int):
             return self.right.get_max_depth()
-        if type(self.right) == int:
+        if isinstance(self.right, int):
             return self.left.get_max_depth()
         else:
             return max(self.left.get_max_depth(), self.right.get_max_depth())
 
     def set_max_depth(self):
+        """Used to initialise the max depth in the __init__"""
         self.max_depth = self.get_max_depth()
 
     def get_explosion_pair(self):
@@ -49,8 +55,8 @@ class Pair:
         else:
             current_pair = self
             target_depth = current_pair.max_depth
-            while not (type(current_pair.left) == int and type(current_pair.right) == int):
-                if type(current_pair.left) == int and not type(current_pair.right) == int:
+            while not (isinstance(current_pair.left, int) and isinstance(current_pair.right, int)):
+                if isinstance(current_pair.left, int) and not isinstance(current_pair.right, int):
                     current_pair = current_pair.right
                     target_depth -= 1
 
@@ -80,19 +86,17 @@ class Pair:
         try:
             right_number = re.findall("[0-9]+", start_string)[-1]
             intermediate = start_string.rsplit(right_number, 1)
-            intermediate[0][:-1]
             start_string = str(left_value + int(right_number)).join(intermediate)
             left_done = True
-        except:
+        except IndexError:
             left_done = False
 
         if not left_done:
             try:
                 right_number = re.findall("[0-9]+", prefix)[-1]
                 intermediate = prefix.rsplit(right_number, 1)
-                intermediate[0][:-1]
                 prefix = str(left_value + int(right_number)).join(intermediate)
-            except:
+            except IndexError:
                 pass
 
         start_string = prefix + start_string
@@ -101,7 +105,7 @@ class Pair:
             left_number = re.findall("[0-9]+", end_string)[0]
             intermediate = end_string.split(left_number, 1)
             end_string = str(right_value + int(left_number)).join(intermediate)
-        except:
+        except IndexError:
             pass
 
         new_string = start_string + "0" + end_string
@@ -137,8 +141,8 @@ def setup_game(filepath: str) -> List[Pair]:
     return pair_list
 
 
-def challenge_one(instructions: List[Pair]) -> int:
-    """Completes challenge one"""
+def get_final_pair(instructions: List[Pair]) -> Pair:
+    """Main logic that applies snailfish addition"""
     final_sum_pair = instructions[0]
     new_string = final_sum_pair.string
     for new_instruction in instructions[1:]:
@@ -164,13 +168,26 @@ def challenge_one(instructions: List[Pair]) -> int:
     return final_sum_pair
 
 
+def challenge_one(pair: Pair) -> int:
+    """Wraps up challenge one"""
+    string = pair.string
+    while string.count(",") > 0:
+        pairs = re.findall(r"\[\d+,\d+\]", string)
+        replacements = {x: str(3 * int(x[1 : x.find(",")]) + 2 * int(x[x.find(",") + 1 : -1])) for x in pairs}
+        for x, y in replacements.items():
+            string = string.replace(x, y)
+    return int(string)
+
+
 if __name__ == "__main__":
-    FILEPATH = r"./resources/aoc-day18-TEST.txt"
+    FILEPATH = r"./resources/aoc-day18.txt"
     print("Setup game... ")
     input_instructions = setup_game(filepath=FILEPATH)
     print("Setup game... DONE")
 
+    final_pair = get_final_pair(instructions=input_instructions)
+
     # Challenge one
     print("Running challenge one...")
-    challenge_one = challenge_one(instructions=input_instructions)
-    # print(f"Challenge one: {challenge_one}")
+    challenge_one = challenge_one(pair=final_pair)
+    print(f"Challenge one: {challenge_one}")
