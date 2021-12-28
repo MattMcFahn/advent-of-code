@@ -50,21 +50,14 @@ class Pair:
             current_pair = self
             target_depth = current_pair.max_depth
             while not (type(current_pair.left) == int and type(current_pair.right) == int):
-                print(target_depth)
                 if type(current_pair.left) == int and not type(current_pair.right) == int:
-                    print("Going right")
-                    print(current_pair.right.list)
                     current_pair = current_pair.right
                     target_depth -= 1
 
                 elif current_pair.left.get_max_depth() - current_pair.root_depth == target_depth:
-                    print("Going left")
-                    print(current_pair.left.list)
                     current_pair = current_pair.left
                     target_depth -= 1
                 else:
-                    print("Going right - final try")
-                    print(current_pair.right.list)
                     current_pair = current_pair.right
                     target_depth -= 1
 
@@ -72,21 +65,37 @@ class Pair:
 
     def apply_explosion(self, explosion_pair):
         """Applies an explosion. Bit hacky, uses the string and ONLY updates the string"""
+        prefix = self.string[: self.string.find(explosion_pair.parent.string.replace(" ", ""))]
+        other = self.string[self.string.find(explosion_pair.parent.string.replace(" ", "")) :]
+
         left_value = explosion_pair.list[0]
         right_value = explosion_pair.list[1]
 
         explosion_string = explosion_pair.string.replace(" ", "")
-        position = self.string.find(explosion_string)
-        start_string = self.string[:position]
-        end_string = self.string[position + len(explosion_string) :]
+        position = other.find(explosion_string)
+
+        start_string = other[:position]
+        end_string = other[position + len(explosion_string) :]
 
         try:
             right_number = re.findall("[0-9]+", start_string)[-1]
             intermediate = start_string.rsplit(right_number, 1)
             intermediate[0][:-1]
             start_string = str(left_value + int(right_number)).join(intermediate)
+            left_done = True
         except:
-            pass
+            left_done = False
+
+        if not left_done:
+            try:
+                right_number = re.findall("[0-9]+", prefix)[-1]
+                intermediate = prefix.rsplit(right_number, 1)
+                intermediate[0][:-1]
+                prefix = str(left_value + int(right_number)).join(intermediate)
+            except:
+                pass
+
+        start_string = prefix + start_string
 
         try:
             left_number = re.findall("[0-9]+", end_string)[0]
@@ -108,7 +117,8 @@ class Pair:
         numbers = [x for x in re.findall("[0-9]+", self.string) if int(x) > 9]
         if numbers:
             number = numbers[0]
-            self.string = self.string.replace(number, f"[{floor(int(number)/2)},{ceil(int(number)/2)}]")
+            print(f"Split: {number}")
+            self.string = self.string.replace(number, f"[{floor(int(number)/2)},{ceil(int(number)/2)}]", 1)
 
 
 def setup_game(filepath: str) -> List[Pair]:
@@ -130,12 +140,17 @@ def setup_game(filepath: str) -> List[Pair]:
 def challenge_one(instructions: List[Pair]) -> int:
     """Completes challenge one"""
     final_sum_pair = instructions[0]
+    new_string = final_sum_pair.string
     for new_instruction in instructions[1:]:
+        print(f"New string: {new_string}")
+        print("\n")
         final_sum_string = "[" + final_sum_pair.string + "," + new_instruction.string + "]"
         final_sum_pair = Pair(string=final_sum_string, parent=None, depth=0)
+        print(f"New string after addition: {final_sum_pair.list}")
         while final_sum_pair.max_depth >= 5 or final_sum_pair.needs_split():
             if final_sum_pair.max_depth >= 5:
                 explosion_pair = final_sum_pair.get_explosion_pair()
+                print(f"Explosion pair: {explosion_pair.list}")
                 final_sum_pair.apply_explosion(explosion_pair=explosion_pair)
 
                 new_string = final_sum_pair.string
