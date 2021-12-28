@@ -2,6 +2,8 @@
 from typing import List
 from math import ceil, floor
 from ast import literal_eval
+from datetime import datetime
+from itertools import product
 
 import re
 
@@ -121,7 +123,7 @@ class Pair:
         numbers = [x for x in re.findall("[0-9]+", self.string) if int(x) > 9]
         if numbers:
             number = numbers[0]
-            print(f"Split: {number}")
+            # print(f"Split: {number}")
             self.string = self.string.replace(number, f"[{floor(int(number)/2)},{ceil(int(number)/2)}]", 1)
 
 
@@ -146,15 +148,15 @@ def get_final_pair(instructions: List[Pair]) -> Pair:
     final_sum_pair = instructions[0]
     new_string = final_sum_pair.string
     for new_instruction in instructions[1:]:
-        print(f"New string: {new_string}")
-        print("\n")
+        # print(f"New string: {new_string}")
+        # print("\n")
         final_sum_string = "[" + final_sum_pair.string + "," + new_instruction.string + "]"
         final_sum_pair = Pair(string=final_sum_string, parent=None, depth=0)
-        print(f"New string after addition: {final_sum_pair.list}")
+        # print(f"New string after addition: {final_sum_pair.list}")
         while final_sum_pair.max_depth >= 5 or final_sum_pair.needs_split():
             if final_sum_pair.max_depth >= 5:
                 explosion_pair = final_sum_pair.get_explosion_pair()
-                print(f"Explosion pair: {explosion_pair.list}")
+                # print(f"Explosion pair: {explosion_pair.list}")
                 final_sum_pair.apply_explosion(explosion_pair=explosion_pair)
 
                 new_string = final_sum_pair.string
@@ -162,14 +164,14 @@ def get_final_pair(instructions: List[Pair]) -> Pair:
                 final_sum_pair.apply_split()
                 new_string = final_sum_pair.string
 
-            print(f"New string: {new_string}")
+            # print(f"New string: {new_string}")
             final_sum_pair = Pair(string=new_string, parent=None, depth=0)
 
     return final_sum_pair
 
 
-def challenge_one(pair: Pair) -> int:
-    """Wraps up challenge one"""
+def get_magnitude(pair: Pair) -> int:
+    """For a given pair, calculates its magnitude"""
     string = pair.string
     while string.count(",") > 0:
         pairs = re.findall(r"\[\d+,\d+\]", string)
@@ -177,6 +179,38 @@ def challenge_one(pair: Pair) -> int:
         for x, y in replacements.items():
             string = string.replace(x, y)
     return int(string)
+
+
+def challenge_one(pair: Pair) -> int:
+    """Wraps up challenge one"""
+    magnitude = get_magnitude(pair=pair)
+    return magnitude
+
+
+def challenge_two(instructions: List[Pair]) -> int:
+    """Wraps up challenge two:
+        * Identify all pairings (x, y), (y, x) of two numbers from the input list
+        * Adds them, gets the magnitude
+        * Finds the max magnitude
+    """
+    number_to_consider = 2 * len(instructions) ** 2
+    covered = 0
+    print(f"{datetime.now()} There are {number_to_consider} pairings to consider")
+    max_magnitude = 0
+    for instruction_one, instruction_two in product(instructions, instructions):
+        if covered % 1000 == 0:
+            print(f"{datetime.now()} Number covered: {covered}")
+
+        if instruction_one.string == instruction_two.string:
+            covered += 1
+        else:
+            pair_one = get_final_pair(instructions=[instruction_one, instruction_two])
+            pair_two = get_final_pair(instructions=[instruction_two, instruction_one])
+            magnitude = max(get_magnitude(pair_one), get_magnitude(pair_two))
+            if magnitude > max_magnitude:
+                max_magnitude = magnitude
+            covered += 1
+    return max_magnitude
 
 
 if __name__ == "__main__":
@@ -191,3 +225,8 @@ if __name__ == "__main__":
     print("Running challenge one...")
     challenge_one = challenge_one(pair=final_pair)
     print(f"Challenge one: {challenge_one}")
+
+    # Challenge two
+    print("Running challenge two...")
+    challenge_two = challenge_two(instructions=input_instructions)
+    print(f"Challenge two: {challenge_two}")
